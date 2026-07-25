@@ -1,0 +1,70 @@
+{
+  "title": "OpenWrt Presence",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to an OpenWrt Presence Agent",
+        "description": "Enter the local observer API connection details.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "token": "Bearer token",
+          "use_ssl": "Use TLS",
+          "verify_ssl": "Verify TLS certificate"
+        }
+      },
+      "confirm": {
+        "title": "Add {name}",
+        "description": "Enter the bearer token for the discovered observer.",
+        "data": {
+          "token": "Bearer token"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reauthenticate OpenWrt Presence",
+        "description": "The observer rejected its stored bearer token. Enter the replacement token.",
+        "data": {
+          "token": "Bearer token"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure OpenWrt Presence",
+        "description": "Update connection details for this observer. Its stable identity must remain unchanged.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "token": "Bearer token",
+          "use_ssl": "Use TLS",
+          "verify_ssl": "Verify TLS certificate"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to the observer.",
+      "invalid_auth": "The observer rejected the bearer token.",
+      "invalid_tls": "TLS connection or certificate validation failed.",
+      "not_ready": "The observer does not have an authoritative snapshot yet.",
+      "unsupported_observer": "The endpoint is not a compatible OpenWrt Client Observation API v1 observer.",
+      "invalid_response": "The observer returned an invalid or unsafe response.",
+      "unknown": "Unexpected error while connecting to the observer."
+    },
+    "abort": {
+      "already_configured": "This observer is already configured.",
+      "invalid_discovery": "The discovery announcement did not include a valid observer identity.",
+      "reauth_successful": "Reauthentication was successful.",
+      "reconfigure_successful": "Reconfiguration was successful.",
+      "unique_id_mismatch": "The connection details belong to a different observer."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Tracker defaults",
+        "description": "This setting affects only clients first observed after it is enabled. Existing entities keep their registry setting.",
+        "data": {
+          "enable_new_trackers": "Enable newly observed trackers by default"
+        }
+      }
+    }
+  }
+}

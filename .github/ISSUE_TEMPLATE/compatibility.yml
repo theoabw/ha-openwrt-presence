@@ -1,0 +1,30 @@
+name: Installation and compatibility report
+description: Report a tested Home Assistant and observer combination
+title: "compat: "
+labels: ["testing wanted"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for sharing experience from a real installation—successes are just as useful as failures. A short report is enough, and you do not need to complete every possible test.
+  - type: input
+    id: environment
+    attributes:
+      label: What did you test?
+      placeholder: "HA version/install type, integration version, agent/router if known"
+    validations:
+      required: true
+  - type: dropdown
+    id: result
+    attributes:
+      label: Overall result
+      options:
+        - Everything worked
+        - Partly worked
+        - Did not work
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: A short note about setup, tracking, restarts, or anything that failed is enough.

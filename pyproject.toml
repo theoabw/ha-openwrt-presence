@@ -1,0 +1,24 @@
+[project]
+name = "ha-openwrt-presence"
+version = "0.1.0"
+description = "Event-driven OpenWrt presence detection for Home Assistant"
+authors = [
+    { name = "Theo Wilenius" },
+]
+license = "Apache-2.0"
+requires-python = ">=3.13"
+
+[project.urls]
+Homepage = "https://github.com/theoabw/ha-openwrt-presence"
+Issues = "https://github.com/theoabw/ha-openwrt-presence/issues"
+Repository = "https://github.com/theoabw/ha-openwrt-presence"
+
+[tool.ruff]
+line-length = 88
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.mypy]
+strict = true

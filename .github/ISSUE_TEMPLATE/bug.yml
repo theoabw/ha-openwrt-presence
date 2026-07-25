@@ -1,0 +1,34 @@
+name: Bug report
+description: Report a reproducible integration problem
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include bearer tokens, MAC addresses, entity IDs containing identifying data, raw client inventories, or unsanitized diagnostics.
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Whatever you know is enough.
+      placeholder: "Home Assistant 2026.7, integration 0.1.0, agent 0.1.0"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Tell us what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How can we reproduce it?
+      description: Optional, but useful for intermittent problems.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized logs
+      description: Optional. A short relevant excerpt is usually enough.
+      render: text
