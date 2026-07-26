@@ -25,6 +25,11 @@ def test_agent_contract_fixture_is_consumable() -> None:
     assert parse_info(raw["info"]).version == "fixture"
 
     snapshot = parse_snapshot(raw["snapshot"])
+    assert {
+        connection.provider
+        for client in snapshot.clients
+        for connection in client.connections
+    } == {"ubus", "wired-arp"}
     events = [parse_event(item) for item in raw["events"]]
     assert snapshot.sequence == 4
     assert [event.type for event in events] == [
@@ -35,6 +40,7 @@ def test_agent_contract_fixture_is_consumable() -> None:
 
     store = ObserverStore()
     store.apply_snapshot(snapshot, available=True)
+    assert len(store.clients) == 2
     manager = object.__new__(ConnectionManager)
     manager._store = store
     manager._validate_hello(events[0])
