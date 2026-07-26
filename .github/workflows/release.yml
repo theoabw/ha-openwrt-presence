@@ -82,5 +82,5 @@ jobs:
           gh release create "$GITHUB_REF_NAME" \
             --verify-tag \
             "${notes_args[@]}" \
-            --title "OpenWrt Presence $GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
             dist/*.zip dist/SHA256SUMS
