@@ -50,16 +50,15 @@ jobs:
       - name: Verify and package release
         run: |
           version="${GITHUB_REF_NAME#v}"
-          manifest_version="$(
-            jq -r '.version' custom_components/openwrt_presence/manifest.json
-          )"
-          project_version="$(
-            python3 -c \
-              'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])'
-          )"
-          test "$version" = "$manifest_version"
-          test "$version" = "$project_version"
+          printf '%s\n' "$version" |
+            grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'
           scripts/build-release.sh "$version" dist
+          test "$(
+            unzip -p \
+              "dist/openwrt-presence-$version.zip" \
+              custom_components/openwrt_presence/manifest.json |
+              jq -r '.version'
+          )" = "$version"
           (
             cd dist
             sha256sum ./*.zip > SHA256SUMS

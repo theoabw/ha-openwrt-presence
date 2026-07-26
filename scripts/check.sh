@@ -31,5 +31,13 @@ jq empty \
 
 release_dir="$(mktemp -d)"
 trap 'rm -rf "$release_dir"' EXIT
-version="$(jq -r '.version' custom_components/openwrt_presence/manifest.json)"
-scripts/build-release.sh "$version" "$release_dir"
+scripts/build-release.sh 9.8.7 "$release_dir"
+test "$(
+	unzip -p \
+		"$release_dir/openwrt-presence-9.8.7.zip" \
+		custom_components/openwrt_presence/manifest.json |
+		jq -r '.version'
+)" = "9.8.7"
+test "$(
+	jq -r '.version' custom_components/openwrt_presence/manifest.json
+)" = "0.0.0"
