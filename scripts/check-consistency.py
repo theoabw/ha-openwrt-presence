@@ -26,6 +26,8 @@ if manifest_version != project_version:
     raise SystemExit(
         f"manifest version {manifest_version} != project version {project_version}"
     )
+if manifest_version != "0.0.0":
+    raise SystemExit("release metadata must keep the 0.0.0 template version")
 
 found = re.search(r'^PROTOCOL_VERSION: Final = "(v\d+)"$', constants, re.MULTILINE)
 if found is None:
@@ -53,8 +55,7 @@ if home_assistant_requirement.split(".")[:2] != minimum_home_assistant.split("."
     )
 
 expected_row = (
-    f"| {manifest_version} (unreleased) | {minimum_home_assistant} | "
-    f"{protocol_version} |"
+    f"| Next release (unreleased) | {minimum_home_assistant} | {protocol_version} |"
 )
 if expected_row not in compatibility:
     raise SystemExit("protocol compatibility table does not match release metadata")
@@ -70,6 +71,6 @@ if agent_fixture_path.exists():
         )
 
 print(
-    f"consistent integration_version={manifest_version} "
+    f"consistent template_version={manifest_version} "
     f"homeassistant={minimum_home_assistant} protocol={protocol_version}"
 )
