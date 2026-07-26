@@ -27,6 +27,18 @@ The integration requires these authenticated read-only API capabilities:
 - `GET /v1/events` upgrading to a WebSocket that sends `stream.hello`,
   `state.snapshot`, then strictly ordered events and heartbeats.
 
+The reference observer additionally advertises `wired_snapshot` and
+`wired_events` when it provides Ethernet presence through active ARP
+reconciliation and fresh Linux neighbor events. These are additive v1
+capabilities: the integration consumes normalized client connections without
+special-casing their provider, and continues accepting conforming Wi-Fi-only
+observers that expose the original required capability set.
+
+The mirrored interoperability fixture includes one Wi-Fi connection and one
+wired connection. This verifies that both travel through the same bounded
+snapshot, store, entity, and event model; it does not make router-hardware or
+wired-latency guarantees.
+
 The stable `agent_id` is the Home Assistant config-entry identity. A complete
 snapshot carries a runtime epoch and sequence. Presence-changing
 `client.presence_changed` and `client.updated` events must carry a complete

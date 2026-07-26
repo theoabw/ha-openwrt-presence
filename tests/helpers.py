@@ -18,7 +18,13 @@ def info() -> dict[str, Any]:
         "protocol_version": "v1",
         "agent_id": AGENT_ID,
         "version": "test",
-        "capabilities": ["wifi_snapshot", "wifi_events", "websocket"],
+        "capabilities": [
+            "wifi_snapshot",
+            "wifi_events",
+            "wired_snapshot",
+            "wired_events",
+            "websocket",
+        ],
     }
 
 
