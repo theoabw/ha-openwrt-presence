@@ -115,6 +115,7 @@ async def test_start_waits_for_stream_snapshot(hass) -> None:
     release.set()
     await manager.async_stop()
 
+
 async def test_successful_snapshot_resets_reconnect_backoff(hass) -> None:
     """A recovered stream does not retain delay from earlier failures."""
     calls = 0
