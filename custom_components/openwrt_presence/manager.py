@@ -52,6 +52,7 @@ class ConnectionManager:
         self._task: asyncio.Task[None] | None = None
         self._ready: asyncio.Future[None] | None = None
         self._stopping = False
+        self._stream_generation = 0
 
     async def async_start(self) -> None:
         """Start the connection loop and wait for its authoritative snapshot."""
@@ -88,6 +89,7 @@ class ConnectionManager:
     async def _async_run(self) -> None:
         delay = 1.0
         while not self._stopping:
+            stream_generation = self._stream_generation
             self._store.set_available(False)
             try:
                 await self._async_consume_stream()
@@ -113,6 +115,8 @@ class ConnectionManager:
                         self._entry.title,
                         err,
                     )
+            if self._stream_generation != stream_generation:
+                delay = 1.0
             self._store.set_available(False)
             if self._stopping:
                 return
@@ -137,6 +141,7 @@ class ConnectionManager:
                 ):
                     raise IntegrityError("snapshot envelope does not match payload")
                 self._store.apply_snapshot(snapshot, available=True)
+                self._stream_generation += 1
                 if self._ready is not None and not self._ready.done():
                     self._ready.set_result(None)
                 saw_snapshot = True

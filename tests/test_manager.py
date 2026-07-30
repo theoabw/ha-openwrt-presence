@@ -2,11 +2,11 @@
 
 import asyncio
 from typing import cast
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from custom_components.openwrt_presence.api import ObserverAuthError
+from custom_components.openwrt_presence.api import ObserverAuthError, ObserverError
 from custom_components.openwrt_presence.manager import ConnectionManager
 from custom_components.openwrt_presence.models import (
     IntegrityError,
@@ -114,6 +114,58 @@ async def test_start_waits_for_stream_snapshot(hass) -> None:
     assert next(iter(store.clients.values())).state == "present"
     release.set()
     await manager.async_stop()
+
+async def test_successful_snapshot_resets_reconnect_backoff(hass) -> None:
+    """A recovered stream does not retain delay from earlier failures."""
+    calls = 0
+
+    async def stream():
+        nonlocal calls
+        calls += 1
+        if calls < 3:
+            raise ObserverError("connection failed")
+            yield  # pragma: no cover
+        yield parse_event(
+            event(
+                "stream.hello",
+                4,
+                data={"protocol_version": "v1", "replay": False},
+            )
+        )
+        yield parse_event(event("state.snapshot", 4, data=snapshot()))
+        raise ObserverError("connection failed")
+
+    entry = MagicMock()
+    entry.title = "Observer"
+    api = MagicMock()
+    api.async_stream = stream
+    manager = ConnectionManager(
+        hass,
+        entry,
+        api,
+        ObserverStore(),
+        on_auth_failed=AsyncMock(),
+    )
+    delays: list[float] = []
+
+    async def sleep(delay: float) -> None:
+        delays.append(delay)
+        if len(delays) == 3:
+            manager._stopping = True
+
+    with (
+        patch(
+            "custom_components.openwrt_presence.manager.asyncio.sleep",
+            side_effect=sleep,
+        ),
+        patch(
+            "custom_components.openwrt_presence.manager.random.uniform",
+            return_value=0,
+        ),
+    ):
+        await manager._async_run()
+
+    assert delays == [1.0, 2.0, 1.0]
 
 
 async def test_invalid_initial_stream_cleans_up(hass) -> None:
