@@ -88,7 +88,7 @@ cross-observer presence policy.
 - Drive occupancy dashboards without installing another app on every device.
 - Detect trusted guest or device presence entirely inside the local network.
 
-The current MVP targets Home Assistant 2026.7 and later and version 1 of the API
+The integration targets Home Assistant 2026.7 and later and version 1 of the API
 implemented by the sibling
 [`openwrt-presence-agent`](https://github.com/theoabw/openwrt-presence-agent).
 Compatibility is defined by protocol behavior rather than an obsolete source
@@ -108,15 +108,16 @@ commit; see the [compatibility table](docs/protocol-compatibility.md).
 
 ## Installation
 
-Install it as a HACS custom repository:
+Install it from HACS:
 
-1. In HACS, open the three-dot menu and select **Custom repositories**.
-2. Add `https://github.com/theoabw/ha-openwrt-presence` with category
-   **Integration**.
-3. Find **OpenWrt Presence**, download a release, and restart Home Assistant.
-4. Add the integration under **Settings → Devices & services**.
+1. In HACS, search for **OpenWrt Presence** and download the latest release.
+2. Restart Home Assistant.
+3. Add the integration under **Settings → Devices & services**.
 
-HACS default-store inclusion is a later stability milestone.
+The integration is in the HACS default store, so there is no custom repository
+to add. If it does not appear, refresh the repository information in HACS. You
+can also add `https://github.com/theoabw/ha-openwrt-presence` as a custom
+repository with category **Integration**.
 
 For manual installation, copy `custom_components/openwrt_presence` into
 `/config/custom_components/openwrt_presence`, restart Home Assistant, and add
@@ -244,8 +245,7 @@ trackers. The integration never configures the router or controls clients.
 
 ## Help test and improve the integration
 
-Contributions are welcome. Particularly useful contributions before the first
-public release include:
+Contributions are welcome. Particularly useful contributions include:
 
 - results from real Home Assistant and compatible observer installations;
 - focused bug fixes with regression tests;
