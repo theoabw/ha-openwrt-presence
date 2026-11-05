@@ -2,6 +2,7 @@
 
 | Integration | Minimum Home Assistant | API protocol | Verified observer source |
 |---|---:|---:|---|
+| Next release (unreleased) | 2026.7.0 | v1 |
 | 0.2.2 | 2026.7.0 | v1 | Any conforming v1 implementation; the reference is [`openwrt-presence-agent`](https://github.com/theoabw/openwrt-presence-agent) |
 | 0.1.0 | 2026.7.0 | v1 | Any conforming v1 implementation; the reference is [`openwrt-presence-agent`](https://github.com/theoabw/openwrt-presence-agent) |
 
