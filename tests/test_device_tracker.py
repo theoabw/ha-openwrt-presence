@@ -3,6 +3,7 @@
 from unittest.mock import AsyncMock, patch
 
 from homeassistant.const import STATE_HOME, STATE_NOT_HOME, STATE_UNAVAILABLE
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -159,6 +160,15 @@ async def test_config_entry_creates_push_tracker_and_unloads(hass) -> None:
     assert states[0].state == STATE_HOME
     entity_id = states[0].entity_id
     assert entity_id == "device_tracker.client_02_00_00_00_00_01"
+    assert states[0].name == "Client 02:00:00:00:00:01"
+    device = dr.async_get(hass).async_get_device(
+        connections={(dr.CONNECTION_NETWORK_MAC, "02:00:00:00:00:01")}
+    )
+    assert device is not None
+    assert device.name == "Client 02:00:00:00:00:01"
+    entity_entry = er.async_get(hass).async_get(entity_id)
+    assert entity_entry is not None
+    assert entity_entry.device_id == device.id
     start.assert_awaited_once()
 
     entry.runtime_data.store.update_client(parse_client(client("absent")), 5)

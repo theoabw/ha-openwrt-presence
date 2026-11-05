@@ -5,6 +5,7 @@ from __future__ import annotations
 from homeassistant.components.device_tracker.entity import ScannerEntity
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC, DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import OpenWrtPresenceConfigEntry
@@ -102,8 +103,21 @@ class OpenWrtClientTracker(ScannerEntity):
         self._entry = entry
         self._store = store
         self._client_id = client_id
-        self._attr_mac_address = client_id.removeprefix("mac:").upper()
-        self._attr_name = f"Client {self._attr_mac_address}"
+        self._mac = client_id.removeprefix("mac:").upper()
+        self._attr_mac_address = self._mac
+
+    @property  # type: ignore[misc]
+    def device_info(self) -> DeviceInfo:
+        """Return the client device this tracker belongs to.
+
+        Newer Home Assistant releases expose ``device_info`` on ScannerEntity
+        and expect integrations to attach trackers to a device, so the entity
+        carries no name of its own and takes the device name.
+        """
+        return DeviceInfo(
+            connections={(CONNECTION_NETWORK_MAC, self._mac)},
+            name=f"Client {self._mac}",
+        )
 
     @property
     def unique_id(self) -> str:
