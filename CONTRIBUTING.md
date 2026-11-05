@@ -19,6 +19,34 @@ compatibility report exercises authentication, the initial snapshot, immediate
 push updates, disconnect availability, snapshot recovery, and clean reload or
 unload.
 
+## Commit and pull request titles
+
+Pull requests are squash-merged, and the pull request title becomes the commit
+subject on `main`. Pull request titles and commit subjects therefore use the
+same format:
+
+```
+type(scope): imperative summary
+```
+
+- `type` is one of `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `build`,
+  `ci`, `chore`, or `revert`. Use `release` only for release preparation.
+- `scope` names the affected area when it helps, for example `fix(manager):`,
+  `fix(device-tracker):`, or `ci(release):`.
+- The summary is lowercase, imperative, and has no trailing period.
+- Keep the subject short; put the reasoning, the effect, and what was tested in
+  the body.
+
+Contributors do not need to rewrite their branch history, because only the pull
+request title survives the squash. Maintainers may rename a title before merge
+so the resulting commit follows this format.
+
+Examples:
+
+- `feat: opt-in reconnect grace for transient Wi-Fi drops`
+- `fix(ubus): let hostapd's group answer the event socket`
+- `docs(compatibility): record the EDUP EP-RT2983 test report`
+
 ## Code changes
 
 Keep the integration focused on mapping observer state into Home Assistant.
