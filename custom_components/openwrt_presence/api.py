@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import json
 from collections.abc import AsyncIterator
-from typing import Any
+from typing import Any, Final
 
 from aiohttp import (
     ClientConnectionError,
@@ -30,6 +30,8 @@ from .models import (
     parse_info,
     parse_snapshot,
 )
+
+_READ_CHUNK_BYTES: Final = 64 * 1024
 
 
 class ObserverError(Exception):
@@ -170,10 +172,14 @@ class ObserverClient:
         length = response.content_length
         if length is not None and length > MAX_RESPONSE_BYTES:
             raise ObserverResponseError("observer response is too large")
-        payload = await response.content.read(MAX_RESPONSE_BYTES + 1)
-        if len(payload) > MAX_RESPONSE_BYTES:
-            raise ObserverResponseError("observer response is too large")
-        return payload
+        chunks: list[bytes] = []
+        size = 0
+        async for chunk in response.content.iter_chunked(_READ_CHUNK_BYTES):
+            size += len(chunk)
+            if size > MAX_RESPONSE_BYTES:
+                raise ObserverResponseError("observer response is too large")
+            chunks.append(chunk)
+        return b"".join(chunks)
 
     async def async_stream(self) -> AsyncIterator[Event]:
         """Yield validated WebSocket event envelopes."""

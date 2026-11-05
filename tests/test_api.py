@@ -1,5 +1,7 @@
 """Tests for bounded HTTP and WebSocket transport behavior."""
 
+import asyncio
+import json
 from collections.abc import AsyncIterator
 
 import pytest
@@ -15,7 +17,7 @@ from custom_components.openwrt_presence.api import (
 )
 from custom_components.openwrt_presence.const import MAX_RESPONSE_BYTES
 
-from .helpers import TOKEN, event, info, snapshot
+from .helpers import TOKEN, client, event, info, snapshot
 
 pytestmark = pytest.mark.usefixtures("socket_enabled")
 
@@ -71,6 +73,34 @@ async def test_http_info_and_snapshot(aiohttp_server) -> None:
 
     assert parsed_info.agent_id == info()["agent_id"]
     assert parsed_snapshot.sequence == 4
+
+
+async def test_http_reads_snapshot_split_across_chunks(aiohttp_server) -> None:
+    """A chunked response is read to the end, not just to its first chunk."""
+    clients = [
+        client("present", client_id=f"mac:02:00:00:00:{n:02x}:01") for n in range(64)
+    ]
+    body = json.dumps(snapshot(clients=clients)).encode()
+    assert len(body) > 2048
+
+    async def get_snapshot(request: web.Request) -> web.StreamResponse:
+        response = web.StreamResponse()
+        response.content_type = "application/json"
+        await response.prepare(request)
+        for start in range(0, len(body), 1024):
+            await response.write(body[start : start + 1024])
+            await asyncio.sleep(0)
+        await response.write_eof()
+        return response
+
+    app = web.Application()
+    app.router.add_get("/v1/clients", get_snapshot)
+    server = await aiohttp_server(app)
+    async with ClientSession() as session:
+        api_client = await client_for_server(server, session)
+        parsed = await api_client.async_get_snapshot()
+
+    assert len(parsed.clients) == len(clients)
 
 
 @pytest.mark.parametrize(
