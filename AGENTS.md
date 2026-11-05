@@ -25,6 +25,23 @@ reserved values instead:
 - locally administered MAC addresses such as `02:00:00:00:00:01`;
 - placeholder tokens built from obvious patterns rather than copied values.
 
+## Dependencies
+
+The integration has no runtime Python dependencies on purpose, so the
+`requirements` list in the manifest stays empty. Adding an entry requires the
+maintainer's approval and the reason in the pull request body.
+
+## Tests and typing
+
+- Tests run against the real Home Assistant test harness loaded in
+  `tests/conftest.py`. Do not stub, shadow, or replace modules of the
+  `homeassistant` package; a test that passes against a fake Home Assistant
+  proves nothing about a real one.
+- The package is typed under `mypy` strict mode. Public functions carry
+  annotations.
+- A new entity needs matching keys in `strings.json` and
+  `translations/en.json`.
+
 ## Behaviour the integration keeps
 
 - Push only. No polling coordinator, no departure delay, and no
@@ -34,6 +51,8 @@ reserved values instead:
 - Trackers are source specific and disabled by default.
 - Observations are mapped literally. Occupancy policy, grouping, and automation
   stay in Home Assistant, not in this integration.
+- Entity `unique_id` values are stable across releases. Renaming or
+  restructuring an entity needs a migration that preserves user history.
 
 ## Protocol compatibility
 
